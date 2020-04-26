@@ -403,8 +403,8 @@ static void MousePoll(void *param) {
 					c1 -= cross[1].y;
 					c2 -= cross[2].y;
 					break;
-                default:
-                    break;
+				default:
+					break;
 				}
 			}
 		#endif
@@ -446,8 +446,8 @@ static void MousePoll(void *param) {
 					c1 = cross[1].x;
 					c2 = cross[2].x;
 					break;
-                default:
-                    break;
+				default:
+					break;
 				}
 			}
 		#endif
@@ -487,17 +487,17 @@ static void MousePoll(void *param) {
 		m->flags |= GMOUSE_FLG_IN_CAL;
 
 		// Set up our calibration locations
-        if ((gmvmt(m)->d.flags & GMOUSE_VFLG_CAL_EXTREMES)) {
-            cross[0].x = 0;		cross[0].y = 0;
-            cross[1].x = w-1;	cross[1].y = 0;
-            cross[2].x = w-1;	cross[2].y = h-1;
-            cross[3].x = w/2;	cross[3].y = h/2;
-        } else {
-            cross[0].x = w/4;	cross[0].y = h/4;
-            cross[1].x = w-w/4;	cross[1].y = h/4;
-            cross[2].x = w-w/4;	cross[2].y = h-h/4;
-            cross[3].x = w/2;	cross[3].y = h/2;
-        }
+		if ((gmvmt(m)->d.flags & GMOUSE_VFLG_CAL_EXTREMES)) {
+			cross[0].x = 0;		cross[0].y = 0;
+			cross[1].x = w-1;	cross[1].y = 0;
+			cross[2].x = w-1;	cross[2].y = h-1;
+			cross[3].x = w/2;	cross[3].y = h/2;
+		} else {
+			cross[0].x = w/4;	cross[0].y = h/4;
+			cross[1].x = w-w/4;	cross[1].y = h/4;
+			cross[2].x = w-w/4;	cross[2].y = h-h/4;
+			cross[3].x = w/2;	cross[3].y = h/2;
+		}
 
 		// Set up the calibration display
 		gdispGClear(m->display, CALIBRATION_BACKGROUND);
@@ -655,7 +655,7 @@ void _gmouseInit(void) {
 			static const GMouseVMT * const dclist[] = {GINPUT_MOUSE_DRIVER_LIST};
 
 			for(i = 0; i < sizeof(dclist)/sizeof(dclist[0]); i++) {
-                if (!(dclist[i]->d.flags & GMOUSE_VFLG_DYNAMICONLY))
+				if (!(dclist[i]->d.flags & GMOUSE_VFLG_DYNAMICONLY))
 					gdriverRegister(&dclist[i]->d, GDISP);
 			}
 		}
@@ -663,9 +663,9 @@ void _gmouseInit(void) {
 	// One and only one mouse
 	#else
 		{
-			extern const GMouseVMT const GMOUSEVMT_OnlyOne[1];
+			extern const GMouseVMT GMOUSEVMT_OnlyOne[1];
 
-            if (!(GMOUSEVMT_OnlyOne->d.flags & GMOUSE_VFLG_DYNAMICONLY))
+			if (!(GMOUSEVMT_OnlyOne->d.flags & GMOUSE_VFLG_DYNAMICONLY))
 					gdriverRegister(&GMOUSEVMT_OnlyOne->d, GDISP);
 		}
 	#endif
@@ -677,8 +677,8 @@ void _gmouseDeinit(void) {
 }
 
 gBool _gmouseInitDriver(GDriver *g, void *display, unsigned driverinstance, unsigned systeminstance) {
-    #define m   ((GMouse *)g)
-    (void) systeminstance;
+	#define m   ((GMouse *)g)
+	(void) systeminstance;
 
 	// The initial display is passed in the parameter for mice
 	m->display = display;
@@ -690,55 +690,55 @@ gBool _gmouseInitDriver(GDriver *g, void *display, unsigned driverinstance, unsi
 	#endif
 
 	// Init the mouse
-    if (!gmvmt(m)->init((GMouse *)g, driverinstance))
-        return gFalse;
+	if (!gmvmt(m)->init((GMouse *)g, driverinstance))
+		return gFalse;
 
 	// Ensure the Poll timer is started
 	if (!gtimerIsActive(&MouseTimer))
 		gtimerStart(&MouseTimer, MousePoll, 0, gTrue, GINPUT_MOUSE_POLL_PERIOD);
 
-    return gTrue;
+	return gTrue;
 
-    #undef m
+	#undef m
 }
 
 void _gmousePostInitDriver(GDriver *g) {
-    #define     m   ((GMouse *)g)
+	#define     m   ((GMouse *)g)
 
 	#if !GINPUT_TOUCH_STARTRAW
 		m->flags |= GMOUSE_FLG_CLIP;
 	#endif
 
-    #if !GINPUT_TOUCH_NOCALIBRATE && !GINPUT_TOUCH_STARTRAW
-        if ((gmvmt(m)->d.flags & GMOUSE_VFLG_CALIBRATE)) {
-            #if GINPUT_TOUCH_USER_CALIBRATION_LOAD
-                if (LoadMouseCalibration(gdriverGetDriverInstanceNumber((GDriver *)m), &m->caldata, sizeof(GMouseCalibration)))
-                    m->flags |= GMOUSE_FLG_CALIBRATE;
-                else
-            #endif
-            if (gmvmt(m)->calload && gmvmt(m)->calload(m, &m->caldata, sizeof(GMouseCalibration)))
-                m->flags |= GMOUSE_FLG_CALIBRATE;
+	#if !GINPUT_TOUCH_NOCALIBRATE && !GINPUT_TOUCH_STARTRAW
+		if ((gmvmt(m)->d.flags & GMOUSE_VFLG_CALIBRATE)) {
+			#if GINPUT_TOUCH_USER_CALIBRATION_LOAD
+				if (LoadMouseCalibration(gdriverGetDriverInstanceNumber((GDriver *)m), &m->caldata, sizeof(GMouseCalibration)))
+					m->flags |= GMOUSE_FLG_CALIBRATE;
+				else
+			#endif
+			if (gmvmt(m)->calload && gmvmt(m)->calload(m, &m->caldata, sizeof(GMouseCalibration)))
+				m->flags |= GMOUSE_FLG_CALIBRATE;
 			#if !GINPUT_TOUCH_NOCALIBRATE_GUI
 				else
 					while (CalibrateMouse(m));
 			#endif
-        }
-    #endif
+		}
+	#endif
 
-    // Get the first reading
-    GetMouseReading(m);
+	// Get the first reading
+	GetMouseReading(m);
 
-    #undef m
+	#undef m
 }
 
 void _gmouseDeInitDriver(GDriver *g) {
-    (void) g;
+	(void) g;
 }
 
 GSourceHandle ginputGetMouse(unsigned instance) {
 	if (instance == GMOUSE_ALL_INSTANCES)
 		return (GSourceHandle)&MouseTimer;
-    return (GSourceHandle)gdriverGetInstance(GDRIVER_TYPE_MOUSE, instance);
+	return (GSourceHandle)gdriverGetInstance(GDRIVER_TYPE_MOUSE, instance);
 }
 
 void ginputSetMouseDisplay(unsigned instance, GDisplay *g) {
@@ -811,8 +811,8 @@ gBool ginputGetMouseStatus(unsigned instance, GEventMouse *pe) {
 			return 0;
 
 		// Check it needs calibration
-        if (!(gmvmt(m)->d.flags & GMOUSE_VFLG_CALIBRATE))
-        	return 0;
+		if (!(gmvmt(m)->d.flags & GMOUSE_VFLG_CALIBRATE))
+			return 0;
 
 		return CalibrateMouse(m);
 	}
